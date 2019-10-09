@@ -1,0 +1,12 @@
+select.form-control.km {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.form-group {
+    margin-bottom: 1rem !important;
+}
+.modal-content{
+    -webkit-border-radius: 1px;
+    -moz-border-radius: 1px;
+    border-radius: 1px;
+}
