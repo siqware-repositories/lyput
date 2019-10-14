@@ -44,18 +44,18 @@
                         @csrf
                         <div class="col-md-4 shadow py-3">
                             <div class="form-group row">
-                                <label class="col-md-3">ទំនិញរាយ</label>
-                                <div class="col-md-9">
-                                    <select data-placeholder="ជ្រើសរើសទំនិញរាយ" class="form-control form-control-select2-single" data-fouc></select>
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label class="col-md-3">ទំនិញដំុ</label>
                                 <div class="col-md-9 input-group">
                                     <select data-placeholder="ជ្រើសរើសទំនិញដំុ" class="form-control form-control-select2-group" data-fouc></select>
                                     <span class="input-group-append" data-toggle="modal" id="playlist-create" data-target="#modal_action">
                                         <button class="btn btn-icon btn-light" type="button"><i class="icon-plus-circle2"></i></button>
                                     </span>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-md-3">ទំនិញរាយ</label>
+                                <div class="col-md-9">
+                                    <select data-placeholder="ជ្រើសរើសទំនិញរាយ" class="form-control form-control-select2-single" data-fouc></select>
                                 </div>
                             </div>
                         </div>
