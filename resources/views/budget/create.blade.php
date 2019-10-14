@@ -13,7 +13,7 @@
                     <select name="receiver" class="form-control km">
                         @foreach($receiver as $value)
                             @if($value['desc']!=='ចំណូលលក់ទំនិញ')
-                                <option value="{{$value->id}}">{{$value->desc}} : ({{$value->balance}})</option>
+                                <option {{$value['desc']=='ចំណូលផ្សេងៗ'?'selected':''}} value="{{$value->id}}">{{$value->desc}} : ({{$value->balance}})</option>
                             @endif
                         @endforeach
                     </select>
