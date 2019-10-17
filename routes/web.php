@@ -114,5 +114,11 @@ Route::group(['middleware' => ['web', 'is_super_admin_admin']], function () {
     Route::post('/bundle-search', 'BundleController@search_playlist')->name('bundle.search');
     /*ExcelImport Class*/
     Route::resource('/excel-import', 'ExcelImportController');
+    /*Report Controller*/
+    Route::resource('/report','ReportController');
+    Route::post('/report-stock-invoice','ReportController@stock_inv')->name('report.stock.invoice');
+    Route::post('/report-invoice','ReportController@report_inv')->name('report.invoice');
+    Route::get('/report-stock-invoice-show/{id}','ReportController@stock_invoice_show')->name('report.stock.invoice.show');
+    Route::get('/report-invoice-show/{id}','ReportController@report_invoice_show')->name('report.invoice.show');
 });
 

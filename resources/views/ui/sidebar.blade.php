@@ -65,6 +65,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="{{route('report.index')}}" class="nav-link {{request()->is('report*')?'active':''}}">
+                                <i class="icon-graph"></i>
+                                <span>វិក័យបត្រទិញលក់</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="{{route('ap-ar.index')}}" class="nav-link {{request()->is('ap-ar*')?'active':''}}">
                                 <i class="icon-cash"></i>
                                 <span>បំណុល / សំណង</span>
