@@ -1,6 +1,6 @@
 <div class="modal-content">
     <div class="modal-header bg-light">
-        <h5 class="modal-title">វិក័យបត្រទិញ</h5>
+        <h5 class="modal-title">វិក័យបត្រលក់</h5>
         <button type="button" class="close" data-dismiss="modal">&times;</button>
     </div>
     <div class="modal-body">
