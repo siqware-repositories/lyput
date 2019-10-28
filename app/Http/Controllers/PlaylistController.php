@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Playlist;
 use App\PlaylistDetail;
+use App\Product;
 use App\StockDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -35,15 +36,16 @@ class PlaylistController extends Controller
         $inputTerm = $request->_term;
         StockDetail::get_search($inputTerm);
         $results = StockDetail::with('product_stock_search')
-            ->whereHas('product_stock_search')
-            ->where('status','<>',0)
-            ->orderBy('stock_qty','asc')
+            ->selectRaw('*,sum(stock_qty) as totalStock')
+            ->groupBy('product_id')
+            ->orderByRaw('sum(stock_qty) asc')
+            ->latest('created_at')
             ->get();
         $data = [];
         foreach ($results as $result) {
             $data[] = [
                 'id' => $result['product_stock_search']['id'],
-                'text' => $result['product_stock_search']['desc'].' ស្តុក '.$result['stock_qty'].' តម្លៃលក់ '.$result['sale_value'],
+                'text' => $result['product_stock_search']['desc'].' ស្តុក '.$result['totalStock'].' តម្លៃលក់ '.$result['sale_value'],
             ];
         }
         return response()->json(['results' => $data]);

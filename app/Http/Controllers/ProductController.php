@@ -9,6 +9,7 @@ use App\Stock;
 use App\StockDetail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -17,7 +18,7 @@ class ProductController extends Controller
     /*list*/
     public function list()
     {
-        $stock_product = StockDetail::with('product')->where('status', 1)->get();
+        $stock_product = StockDetail::with('product')->selectRaw('*,sum(stock_qty) as totalStock')->groupBy('product_id')->latest('created_at')->get();
         return DataTables::of($stock_product)
             ->addColumn('action', function ($action) {
                 return $action->qty == $action->stock_qty ? '<div class="dropdown">
@@ -32,8 +33,12 @@ class ProductController extends Controller
             ->editColumn('product.desc',function ($product_desc){
                 return '<a href="#" class="text-input" data-name="desc" data-type="text" data-pk="'.$product_desc->product->id.'" data-url="'.route('product._update').'" data-title="បញ្ចូលឈ្មោះ">'.$product_desc->product->desc.'</a>';
             })
+            ->editColumn('stock_qty',function ($stock_qty){
+                return $stock_qty->totalStock;
+            })
+
             ->addColumn('DT_RowClass',function ($row_class){
-                return $row_class->stock_qty<=0?'bg-warning':'';
+                return $row_class->totalStock<=0?'bg-warning':'';
             })
             ->rawColumns(['action','product.desc'])
             ->make(true);
@@ -509,6 +514,10 @@ class ProductController extends Controller
         return response()->json(['error' => $validator->errors()->all()]);
     }
     public function check_out_stock(){
-        return StockDetail::where('stock_qty','<=',0)->count();
+        return StockDetail::with('product')
+            ->selectRaw('*,sum(stock_qty) as totalStock')
+            ->groupBy('product_id')
+            ->havingRaw('sum(stock_qty)<=?',[0])
+            ->count();
     }
 }
