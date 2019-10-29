@@ -18,7 +18,7 @@ class ProductController extends Controller
     /*list*/
     public function list()
     {
-        $stock_product = StockDetail::with('product')->selectRaw('*,sum(stock_qty) as totalStock')->groupBy('product_id')->latest('created_at')->get();
+        $stock_product = StockDetail::with('product')->selectRaw('*,sum(stock_qty) as totalStock,sum(qty) as totalQty')->groupBy('product_id')->latest('created_at')->get();
         return DataTables::of($stock_product)
             ->addColumn('action', function ($action) {
                 return $action->qty == $action->stock_qty ? '<div class="dropdown">
@@ -36,7 +36,9 @@ class ProductController extends Controller
             ->editColumn('stock_qty',function ($stock_qty){
                 return $stock_qty->totalStock;
             })
-
+            ->editColumn('qty',function ($qty){
+                return $qty->totalQty;
+            })
             ->addColumn('DT_RowClass',function ($row_class){
                 return $row_class->totalStock<=0?'bg-warning':'';
             })
@@ -514,10 +516,16 @@ class ProductController extends Controller
         return response()->json(['error' => $validator->errors()->all()]);
     }
     public function check_out_stock(){
-        return StockDetail::with('product')
-            ->selectRaw('*,sum(stock_qty) as totalStock')
-            ->groupBy('product_id')
-            ->havingRaw('sum(stock_qty)<=?',[0])
-            ->count();
+        $out_ids = StockDetail::selectRaw('id,sum(stock_qty) as totalStock')
+            ->groupBy('product_id')->get();
+        $pluck_ids = [];
+        foreach ($out_ids as $out_id){
+            if ($out_id['totalStock']<=0){
+                $pluck_ids[]=[
+                    $out_id['totalStock']
+                ];
+            }
+        }
+        return count($pluck_ids);
     }
 }
