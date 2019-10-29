@@ -39,21 +39,55 @@
                 </div>
             </div>
         </div>
-
-        <table class="table table-bordered table-striped datatable-scroll-y" width="100%">
-            <thead>
-            <tr>
-                <th>#</th>
-                <th>ពិពណ៌នា</th>
-                <th>ចំនួនទិញ</th>
-                <th>តម្លៃទិញ</th>
-                <th>តម្លៃលក់</th>
-                <th>ចំនួនក្នុងស្តុក</th>
-                <th>កាលបរិច្ឆេទ</th>
-                <th>ប្រតិបត្តិការ</th>
-            </tr>
-            </thead>
-        </table>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-4">
+                    <div class="form-group">
+                        <div class="input-group">
+                            <button class="input-group-prepend btn btn-light">
+                                ស្វែងរកតាមកូដ
+                            </button>
+                            <input type="text" id="stk-id" class="form-control">
+                            <button id="stk-clear" class="input-group-append btn btn-light">
+                                <i class="icon-close2 text-warning"></i>
+                            </button>
+                            <button id="stk-search" class="input-group-append btn btn-light">
+                                <i class="icon-search4 text-info"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped datatable-scroll-y" width="100%">
+                <thead>
+                <tr>
+                    <th></th>
+                    <th>#</th>
+                    <th>ពិពណ៌នា</th>
+                    <th>ចំនួនទិញ</th>
+                    <th>ចំនួនក្នុងស្តុក</th>
+                    <th>កាលបរិច្ឆេទ</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+        <script id="details-template" type="text/x-handlebars-template">
+            <table class="table details-table" id="posts-@{{id}}">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>ចំនួនទិញ</th>
+                    <th>តម្លៃទិញ</th>
+                    <th>តម្លៃលក់</th>
+                    <th>ចំនួនក្នុងស្តុក</th>
+                    <th>កាលបរិច្ឆេទ</th>
+                    <th>ប្រតិបត្តិការ</th>
+                </tr>
+                </thead>
+            </table>
+        </script>
     </div>
     <!-- /basic card -->
     <!-- Action modal -->
@@ -69,6 +103,7 @@
     <script src="{{asset('ui/global_assets/js/plugins/notifications/sweet_alert.min.js')}}"></script>
     <script src="{{asset('ui/global_assets/js/plugins/forms/selects/select2.min.js')}}"></script>
     <script src="{{asset('ui/global_assets/js/plugins/bootstrap4-editable/js/bootstrap-editable.min.js')}}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.4.2/handlebars.min.js"></script>
     <script src="{{asset('js/pages/product/index.js')}}"></script>
     <script src="{{asset('js/pages/playlist/index.js')}}"></script>
 @endpush

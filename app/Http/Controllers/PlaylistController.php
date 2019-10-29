@@ -21,12 +21,13 @@ class PlaylistController extends Controller
             ->whereHas('product_stock_search')
             ->where('status','<>',0)
             ->where('stock_qty', '>=', 1)
+            ->orWhere('id', '=', $inputTerm)
             ->get();
         $data = [];
         foreach ($results as $result) {
             $data[] = [
                 'id' => $result['id'],
-                'text' => $result['product_stock_search']['desc'].' ស្តុក '.$result['stock_qty'].' តម្លៃលក់ '.$result['sale_value'],
+                'text' => 'No: '.$result['id'].' - '.$result['product_stock_search']['desc'].' ស្តុក '.$result['stock_qty'].' តម្លៃលក់ '.$result['sale_value'],
             ];
         }
         return response()->json(['results' => $data]);

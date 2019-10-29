@@ -46,18 +46,22 @@ var ProductBasic = function() {
                 method:'post'
             },
             columns: [
-                { data: 'id', name: 'id' },
+                {
+                    "className":      'details-control',
+                    "orderable":      false,
+                    "searchable":      false,
+                    "data":           null,
+                    "defaultContent": ''
+                },
+                { data: 'product_id', name: 'product_id' },
                 { data: 'product.desc', name: 'product.desc'},
                 { data: 'qty', name: 'qty' },
-                { data: 'pur_value', name: 'pur_value' },
-                { data: 'sale_value', name: 'sale_value' },
                 { data: 'stock_qty', name: 'stock_qty' },
-                { data: 'created_at', name: 'created_at' },
-                { data: 'action', name: 'action',searchable:false,orderable:false },
+                { data: 'created_at', name: 'created_at' }
             ],
             "columnDefs": [
-                { className: "pl-2", "targets": [ 0,1,2,3,4,5,6] },
-                { className: "text-center", "targets": [ 7 ] },
+                { className: "pl-2", "targets": [ 0,1,2,3,4] },
+                { className: "text-center", "targets": [ 5 ] },
             ],
             drawCallback:function () {
                 $('.text-input').editable({mode:'inline'});
@@ -67,6 +71,47 @@ var ProductBasic = function() {
         $('.sidebar-control').on('click', function() {
             table.ajax.reload( null, false );
         });
+        // Add event listener for opening and closing details
+        var template = Handlebars.compile($("#details-template").html());
+        $('.datatable-scroll-y tbody').on('click', 'td.details-control', function () {
+            var tr = $(this).closest('tr');
+            var row = table.row(tr);
+            var tableId = 'posts-' + row.data().id;
+            if (row.child.isShown()) {
+                // This row is already open - close it
+                row.child.hide();
+                tr.removeClass('shown');
+            } else {
+                // Open this row
+                row.child(template(row.data())).show();
+                initTable(tableId, row.data());
+                tr.addClass('shown');
+                tr.next().find('td').addClass('no-padding bg-gray');
+            }
+        });
+
+        function initTable(tableId, data) {
+            $('#' + tableId).DataTable({
+                paging:false,
+                info:false,
+                autoWidth: true,
+                processing: true,
+                serverSide: true,
+                ajax: {
+                    url: data.details_url,
+                    method:'post'
+                },
+                columns: [
+                    { data: 'id', name: 'id' },
+                    { data: 'qty', name: 'qty' },
+                    { data: 'pur_value', name: 'pur_value' },
+                    { data: 'sale_value', name: 'sale_value' },
+                    { data: 'stock_qty', name: 'stock_qty' },
+                    { data: 'created_at', name: 'created_at' },
+                    { data: 'id', name: 'id' },
+                ]
+            })
+        }
     };
 
     // Select2 for length menu styling
@@ -489,4 +534,26 @@ function productAction() {
             $('.out-stock').text(data);
         }
     });
+    /*product search from stock*/
+    $(document).on('click','#stk-search',function () {
+        var stk_id = parseInt($('#stk-id').val());
+        $.ajax({
+            url:route('product.search.from.stock',stk_id),
+            method: 'post',
+            success:function (data) {
+                if (data!=='error'){
+                    table.column(1).search( data ).draw();
+                }
+            }
+        });
+    });
+    /*clear product search from stock*/
+    $(document).on('click','#stk-clear',function () {
+        table
+            .search( '' )
+            .columns().search( '' )
+            .draw();
+        $('#stk-id').val('');
+    });
+
 }

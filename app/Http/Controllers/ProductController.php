@@ -8,6 +8,7 @@ use App\Product;
 use App\Stock;
 use App\StockDetail;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -20,6 +21,25 @@ class ProductController extends Controller
     {
         $stock_product = StockDetail::with('product')->selectRaw('*,sum(stock_qty) as totalStock,sum(qty) as totalQty')->groupBy('product_id')->latest('created_at')->get();
         return DataTables::of($stock_product)
+            ->editColumn('product.desc',function ($product_desc){
+                return '<a href="#" class="text-input" data-name="desc" data-type="text" data-pk="'.$product_desc->product->id.'" data-url="'.route('product._update').'" data-title="បញ្ចូលឈ្មោះ">'.$product_desc->product->desc.'</a>';
+            })
+            ->editColumn('stock_qty',function ($stock_qty){
+                return $stock_qty->totalStock;
+            })
+            ->editColumn('qty',function ($qty){
+                return $qty->totalQty;
+            })
+            ->addColumn('details_url', function($stock) {
+                return route('product.detail.list',$stock->product_id);
+            })
+            ->rawColumns(['product.desc'])
+            ->make(true);
+    }
+    /*stock by product*/
+    public function detail_list($id){
+        $stock_detail = StockDetail::where('product_id',$id)->get();
+        return DataTables::of($stock_detail)
             ->addColumn('action', function ($action) {
                 return $action->qty == $action->stock_qty ? '<div class="dropdown">
 											<a href="#" class="list-icons-item" data-toggle="dropdown">
@@ -30,22 +50,11 @@ class ProductController extends Controller
 											</div>
 										</div>' : '';
             })
-            ->editColumn('product.desc',function ($product_desc){
-                return '<a href="#" class="text-input" data-name="desc" data-type="text" data-pk="'.$product_desc->product->id.'" data-url="'.route('product._update').'" data-title="បញ្ចូលឈ្មោះ">'.$product_desc->product->desc.'</a>';
-            })
-            ->editColumn('stock_qty',function ($stock_qty){
-                return $stock_qty->totalStock;
-            })
-            ->editColumn('qty',function ($qty){
-                return $qty->totalQty;
-            })
             ->addColumn('DT_RowClass',function ($row_class){
-                return $row_class->totalStock<=0?'bg-warning':'';
+                return $row_class->stock_qty<=0?'bg-warning':'';
             })
-            ->rawColumns(['action','product.desc'])
             ->make(true);
     }
-
     /*index*/
     public function index()
     {
@@ -527,5 +536,12 @@ class ProductController extends Controller
             }
         }
         return count($pluck_ids);
+    }
+    public function search_from_stock($id){
+        try{
+            return $pId = StockDetail::findOrFail($id)->product_id;
+        }catch (ModelNotFoundException $exception){
+            return response()->json('error');
+        }
     }
 }

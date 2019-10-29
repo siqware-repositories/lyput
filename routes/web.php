@@ -20,6 +20,8 @@ Route::get('/home', 'HomeController@index')->name('home');
 Route::group(['middleware'=>['web','is_super_admin_admin_user']],function (){
     Route::get('/product', 'ProductController@index')->name('product.index');
     Route::post('/product-list', 'ProductController@list')->name('product.list');
+    Route::post('/product-detail-list/{id}', 'ProductController@detail_list')->name('product.detail.list');
+    Route::post('/product-search-from-stock/{id}', 'ProductController@search_from_stock')->name('product.search.from.stock');
 });
 Route::group(['middleware' => ['web', 'is_super_admin_admin']], function () {
     /*home [/]*/
